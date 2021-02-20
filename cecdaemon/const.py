@@ -85,6 +85,8 @@ USER_CONTROL_CODES = {
 
 COMMANDS = {
     0x36: 'standby',
+    0x41: 'play',
+    0x42: 'deck control',
     0x80: 'wake',
 }
 
