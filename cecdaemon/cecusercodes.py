@@ -26,11 +26,13 @@ def print_keycode(event, *data):
         print(f'{USER_CONTROL_CODES[code]} pressed (hex: {hex(code)}, dec: {code})')
 
 def print_event(event, data):
+    assert event == 4
+    opcode = data['opcode']
     try:
-        event_name = COMMANDS[event]
+        event_name = COMMANDS[opcode]
     except KeyError:
         event_name = "<unknown>"
-    print("%s command (code: %x, data: %s)" % (event_name, event, json.dumps(data)))
+    print("%s command (code: %x, data: %s)" % (event_name, opcode, json.dumps(data)))
 
 def main():
     """ Inits cec and listens for remote keystrokes
@@ -38,8 +40,8 @@ def main():
     print('Initializing CEC, please wait...')
     print('If this takes too long ensure the device is not already in use')
     cec.init()
-    cec.add_callback(print_keycode, cec.EVENT_KEYPRESS)
-    cec.add_callback(print_event, cec.EVENT_COMMAND)
+    cec.add_callback(print_keycode, 2)
+    cec.add_callback(print_event, 4)
     print('CEC device initialized, press remote keys or hit ^C to quit')
 
     try:
