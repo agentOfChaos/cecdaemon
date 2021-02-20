@@ -5,7 +5,8 @@
 
 from time import sleep
 import cec
-from cecdaemon.const import USER_CONTROL_CODES
+from cecdaemon.const import USER_CONTROL_CODES, COMMANDS
+import json
 
 def print_keycode(event, *data):
     """ Takes a python-cec cec.EVENT_COMMAND callback and prints the user control code
@@ -24,13 +25,21 @@ def print_keycode(event, *data):
     if milsec > 0:
         print(f'{USER_CONTROL_CODES[code]} pressed (hex: {hex(code)}, dec: {code})')
 
+def print_event(event, data):
+    try:
+        event_name = COMMANDS[event]
+    except KeyError:
+        event_name = "<unknown>"
+    print("%s command (code: %x, data: %s)" % (event_name, event, json.dumps(data)))
+
 def main():
     """ Inits cec and listens for remote keystrokes
     """
     print('Initializing CEC, please wait...')
     print('If this takes too long ensure the device is not already in use')
     cec.init()
-    cec.add_callback(print_keycode, 2)
+    cec.add_callback(print_keycode, cec.EVENT_KEYPRESS)
+    cec.add_callback(print_event, cec.EVENT_COMMAND)
     print('CEC device initialized, press remote keys or hit ^C to quit')
 
     try:
